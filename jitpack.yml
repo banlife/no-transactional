@@ -1,5 +1,5 @@
 jdk:
-  - azul-17
+  - 17.0.9-zulu
 
 before_install:
   - sdk install java 17.0.9-zulu
