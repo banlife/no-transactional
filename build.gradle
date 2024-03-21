@@ -31,12 +31,9 @@ dependencyManagement {
 
 publishing {
 	publications {
-		maven(MavenPublication) {
-			groupId = 'banlife'
-			artifactId = 'no-transactional'
-			version = '0.0.0'
-
-			from components.java
+		mavenJava(MavenPublication){
+			// jar is the default build task configured by Spring Boot if bootJar=false
+			artifact jar
 		}
 	}
 }
