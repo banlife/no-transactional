@@ -8,4 +8,4 @@ before_install:
   - mvn -v
 
 install:
-  - ./gradlew build publishToMavenLocal
+  - ./gradlew build --stacktrace publishToMavenLocal
