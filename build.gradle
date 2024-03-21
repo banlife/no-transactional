@@ -2,7 +2,6 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version "${springBootVersion}" apply false
 	id 'io.spring.dependency-management' version "${springBootIoVersion}"
-	id "java-test-fixtures"
 	id 'maven-publish'
 }
 
@@ -18,10 +17,10 @@ repositories {
 }
 
 dependencies {
-	testFixturesImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	testFixturesImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testFixturesCompileOnly "org.projectlombok:lombok:${lombokVersion}"
-	testFixturesAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-test'
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
 
 dependencyManagement {
@@ -35,7 +34,7 @@ publishing {
 		maven(MavenPublication) {
 			groupId = 'banlife'
 			artifactId = 'no-transactional'
-			version = '0.0.0'
+			version = '0.0.2'
 
 			from components.java
 		}
