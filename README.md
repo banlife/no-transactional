@@ -17,25 +17,16 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-testImplementation 'com.github.banlife:no-transactional:preRelease-4'
-```
+dependencies {
+    testImplementation 'com.github.banlife:no-transactional:preRelease-5'
+}
 
-2. Add a file named **META-INF/services/org.junit.jupiter.api.extension.Extension** under the `src/test/resources` package of the module,   
-and enter the following code:
-<img width="372" alt="image" src="https://github.com/banlife/no-transactional/assets/155510835/788b1eaf-19ce-4ed7-ab2c-10aa1faef3a1">
-
-```
-banlife.NoTransactionExtension
-```
-
-3. Add a file named `junit-platform.properties` under the `resources` package, and enter the following code:
-<img width="247" alt="image" src="https://github.com/banlife/no-transactional/assets/155510835/a36f2358-2616-4e93-8d5e-3db597db73ec">
-   
-```
-junit.jupiter.extensions.autodetection.enabled=true
+test {
+    systemProperty("junit.jupiter.extensions.autodetection.enabled", true)
+}
 ```
    
-4. Happy hacking! 🚀
+2. Happy hacking! 🚀
 ---
 
 # no-transactional(Korean)
@@ -55,23 +46,13 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-testImplementation 'com.github.banlife:no-transactional:preRelease-4'
-```
-   
-2. 모듈의 src.test.resources 패키지 하위에 **META-INF/services/org.junit.jupiter.api.extension.Extension** 파일을 추가한 후,   
-아래 코드를 입력합니다.
-<img width="372" alt="image" src="https://github.com/banlife/no-transactional/assets/155510835/788b1eaf-19ce-4ed7-ab2c-10aa1faef3a1">
+dependencies {
+    testImplementation 'com.github.banlife:no-transactional:preRelease-5'
+}
 
-```
-banlife.NoTransactionExtension
-```
-   
-3. resources 패키지 하위에 **junit-platform.properties** 파일을 추가한 후,   
-아래 코드를 입력합니다.
-<img width="247" alt="image" src="https://github.com/banlife/no-transactional/assets/155510835/a36f2358-2616-4e93-8d5e-3db597db73ec">
-   
-```
-junit.jupiter.extensions.autodetection.enabled=true
+test {
+    systemProperty("junit.jupiter.extensions.autodetection.enabled", true)
+}
 ```
    
-4. Happy hacking! 🚀
+2. Happy hacking! 🚀
