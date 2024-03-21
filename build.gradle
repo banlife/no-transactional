@@ -1,8 +1,9 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version "${springBootVersion}"
+	id 'org.springframework.boot' version "${springBootVersion}" apply false
 	id 'io.spring.dependency-management' version "${springBootIoVersion}"
 	id "java-test-fixtures"
+	id 'maven-publish'
 }
 
 group = "${projectGroup}"
@@ -12,19 +13,29 @@ java {
 	sourceCompatibility = '17'
 }
 
-repositories {
-	mavenCentral()
-	maven {
-		url "https://jitpack.io"
-		credentials { username authToken }
-	}
-}
-
 dependencies {
 	testFixturesImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	testFixturesImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testFixturesCompileOnly "org.projectlombok:lombok:${lombokVersion}"
 	testFixturesAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+}
+
+dependencyManagement {
+	imports {
+		mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+	}
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId = "${projectGroup}"
+			artifactId = 'no-transactional'
+			version = "${projectVersion}"
+
+			from components.java
+		}
+	}
 }
 
 tasks.named('test') {
