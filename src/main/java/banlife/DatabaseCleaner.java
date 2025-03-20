@@ -22,10 +22,24 @@ public abstract class DatabaseCleaner {
 
     private static void deleteAll(JdbcTemplate jdbcTemplate, EntityManager entityManager) {
         entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
+        dropAllIndexes(jdbcTemplate);
         for (String tableName : findDatabaseTableNames(jdbcTemplate)) {
             entityManager.createNativeQuery("DELETE FROM %s".formatted(tableName)).executeUpdate();
         }
         entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY TRUE").executeUpdate();
+    }
+
+    private static void dropAllIndexes(JdbcTemplate jdbcTemplate) {
+        List<String> indexNames = jdbcTemplate.queryForList(
+            "SELECT INDEX_NAME FROM INFORMATION_SCHEMA.INDEXES",
+            String.class
+        );
+        
+        for (String indexName : indexNames) {
+            if (!indexName.equals("PRIMARY_KEY")) {
+                jdbcTemplate.execute("DROP INDEX IF EXISTS " + indexName);
+            }
+        }
     }
 
     private static List<String> findDatabaseTableNames(JdbcTemplate jdbcTemplate) {
