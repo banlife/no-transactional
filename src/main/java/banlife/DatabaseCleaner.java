@@ -1,36 +1,40 @@
 package banlife;
 
-import jakarta.persistence.EntityManager;
+import banlife.cleaner.DatabaseType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.List;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
+@Slf4j
 public abstract class DatabaseCleaner {
+
     public static void clear(ApplicationContext applicationContext) {
-        var entityManager = applicationContext.getBean(EntityManager.class);
         var jdbcTemplate = applicationContext.getBean(JdbcTemplate.class);
         var transactionTemplate = applicationContext.getBean(TransactionTemplate.class);
+        var dataSource = applicationContext.getBean(DataSource.class);
+
+        var databaseProductName = resolveDatabaseProductName(dataSource);
+        var databaseType = DatabaseType.fromProductName(databaseProductName);
+        var cleaner = databaseType.getCleaner(jdbcTemplate);
 
         transactionTemplate.execute(status -> {
-            entityManager.clear();
-            deleteAll(jdbcTemplate, entityManager);
+            cleaner.clean();
             return null;
         });
     }
 
-    private static void deleteAll(JdbcTemplate jdbcTemplate, EntityManager entityManager) {
-        entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
-        for (String tableName : findDatabaseTableNames(jdbcTemplate)) {
-            entityManager.createNativeQuery("DELETE FROM %s".formatted(tableName)).executeUpdate();
+    private static String resolveDatabaseProductName(DataSource dataSource) {
+        try (Connection connection = dataSource.getConnection()) {
+            var databaseName = connection.getMetaData().getDatabaseProductName();
+            log.debug("데이터베이스 제품명={}", databaseName);
+            return databaseName;
+        } catch (SQLException e) {
+            throw new IllegalStateException("데이터베이스 제품명을 가져오는 데 실패했습니다.", e);
         }
-        entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY TRUE").executeUpdate();
-    }
-
-    private static List<String> findDatabaseTableNames(JdbcTemplate jdbcTemplate) {
-        return jdbcTemplate
-                .query("SHOW TABLES", (rs, rowNum) -> rs.getString(1))
-                .stream().toList();
     }
 }
